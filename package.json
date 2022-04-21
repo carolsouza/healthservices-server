@@ -11,12 +11,15 @@
       "@types/express": "^4.17.13",
       "axios": "^0.26.1",
       "cors": "^2.8.5",
+      "dotenv": "^16.0.0",
       "express": "^4.17.3",
+      "nodemon": "^2.0.15",
       "pg": "^8.4.0",
       "reflect-metadata": "^0.1.10",
       "typeorm": "0.2.38"
    },
    "scripts": {
+      "dev": "nodemon src/index.ts",
       "start": "ts-node src/index.ts"
    }
 }
