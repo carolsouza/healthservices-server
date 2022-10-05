@@ -8,10 +8,10 @@ export class Triagens {
     id: number;
 
     @Column()
-    perguntas: string[];
+    perguntas: string;
 
     @Column()
-    respostas: string[];
+    respostas: string;
 
     @Column()
     idUsuario: number;
