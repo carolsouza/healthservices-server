@@ -23,6 +23,11 @@ export class Usuarios {
     @Column()
     UF: string;
 
+    @Column()
+    cidade: string;
+
+    @Column()
+    senha: string;
 
     // Relations //
     @OneToMany(type => Triagens, triagem => triagem.id, {cascade: false})
