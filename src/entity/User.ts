@@ -21,8 +21,6 @@ export class User {
     @Column()
     UF: string;
 
-
     // Relations //
-
 
 }
