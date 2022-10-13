@@ -75,7 +75,7 @@ export const verificaLogin = async(request: Request, response: Response) => {
     
     if (request.body) {
         
-        const values = request.body;
+        const { values } = request.body;
         const users = await getRepository(Usuarios).findOne({
             where: {
                 email: values.email
@@ -86,7 +86,7 @@ export const verificaLogin = async(request: Request, response: Response) => {
             return response.status(400).send('Nenhum usuário encontrado!')
         }
     
-        const isValid = await bcrypt.compare(values.pass, users.senha)
+        const isValid = await bcrypt.compare(values.senha, users.senha)
     
         if(!isValid){
             return response.sendStatus(401)
