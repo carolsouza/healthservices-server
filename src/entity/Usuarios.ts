@@ -29,6 +29,9 @@ export class Usuarios {
     @Column()
     senha: string;
 
+    @Column({default: null})
+    token: string;
+
     // Relations //
     @OneToMany(type => Triagens, triagem => triagem.id, {cascade: false})
     triagens: Triagens[]
