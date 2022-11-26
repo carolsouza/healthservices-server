@@ -1,11 +1,11 @@
 import 'reflect-metadata';
-//import { createConnection } from 'typeorm';
+import { createConnection } from 'typeorm';
 import * as express from 'express';
 import * as cors from 'cors';
 import routes from './routes';
 
 const app = express();
-//createConnection().catch((error) => console.log(error));
+createConnection().catch((error) => console.log(error));
 
 app.use(cors());
 app.use(express.json());

@@ -9,6 +9,7 @@ const db = require('../config/database');
 
 import { Request, Response } from 'express';
 const { WebhookClient } = require('dialogflow-fulfillment');
+const mailer = require('../modules/mailer');
 
 export const webhookComunication = async (
   request: Request,
@@ -83,68 +84,80 @@ export const webhookComunication = async (
       })
       .catch((e) => console.error(e.stack));
 
-    if (result) {
+    console.log('Result: ', result);
+    if (result == undefined) {
       console.log('ta vindo no if');
       const qryInsert = `INSERT INTO anamnese(diabetes, oncologico, cardiaco, uso_medicacao, exame_period, exame_period_ultim, alergia_med, alergia_med_nome, funcionamento_intestino, ciclo_menstrual, anticoncepcional, hipertensao, email) \
       VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *`;
       let values = [
-        agent.parameters.diabetes,
-        agent.parameters.oncologico,
-        agent.parameters.cardiaco,
-        agent.parameters.uso_medicacao,
-        agent.parameters.exame_period,
+        agent.parameters.diabetes == 'Sim' ? true : false,
+        agent.parameters.oncologico == 'Sim' ? true : false,
+        agent.parameters.cardiaco == 'Sim' ? true : false,
+        agent.parameters.uso_medicacao == 'Sim' ? true : false,
+        agent.parameters.exame_period == 'Sim' ? true : false,
         agent.parameters.exame_period_ultim,
-        agent.parameters.alergia_med,
+        agent.parameters.alergia_med == 'Sim' ? true : false,
         agent.parameters.alergia_med_nome,
         agent.parameters.funcionamento_intestino,
         agent.parameters.ciclo_menstrual,
-        agent.parameters.ciclo_menstrual,
-        agent.parameters.anticoncepcional,
-        agent.parameters.hipertensao,
+        agent.parameters.anticoncepcional == 'Sim' ? true : false,
+        agent.parameters.hipertensao == 'Sim' ? true : false,
         agent.parameters.email,
       ];
 
+      console.log('values: ', values);
+
       await db
-        .query(qrySelect, values)
+        .query(qryInsert, values)
         .then((res) => {
           console.log(res.rows[0]);
           result = res.rows[0];
           //see log for output
+          agent.add(`Ficha de anamnese registrada com sucesso!`);
         })
-        .catch((e) => console.error(e.stack));
-
-      agent.add(`Ficha de anamnese registrada com sucesso!`);
+        .catch((e) => {
+          console.error(e.stack);
+          agent.add(
+            `Problemas ao cadastrar ficha de anamnese. Tente novamente!`
+          );
+        });
     } else {
       console.log('ta vindo no else');
       const qryUpdate = `UPDATE anamnese SET diabetes = $1, oncologico = $2, cardiaco = $3, uso_medicacao = $4, exame_period = $5, exame_period_ultim = $6, alergia_med = $7, alergia_med_nome = $8, funcionamento_intestino = $9, ciclo_menstrual = $10, anticoncepcional = $11, hipertensao = $12 \
       WHERE email = $13 RETURNING *`;
       let values = [
-        agent.parameters.diabetes,
-        agent.parameters.oncologico,
-        agent.parameters.cardiaco,
-        agent.parameters.uso_medicacao,
-        agent.parameters.exame_period,
+        agent.parameters.diabetes == 'Sim' ? true : false,
+        agent.parameters.oncologico == 'Sim' ? true : false,
+        agent.parameters.cardiaco == 'Sim' ? true : false,
+        agent.parameters.uso_medicacao == 'Sim' ? true : false,
+        agent.parameters.exame_period == 'Sim' ? true : false,
         agent.parameters.exame_period_ultim,
-        agent.parameters.alergia_med,
+        agent.parameters.alergia_med == 'Sim' ? true : false,
         agent.parameters.alergia_med_nome,
         agent.parameters.funcionamento_intestino,
         agent.parameters.ciclo_menstrual,
-        agent.parameters.ciclo_menstrual,
-        agent.parameters.anticoncepcional,
-        agent.parameters.hipertensao,
+        agent.parameters.anticoncepcional == 'Sim' ? true : false,
+        agent.parameters.hipertensao == 'Sim' ? true : false,
         agent.parameters.email,
       ];
 
+      console.log('values: ', values);
+
       await db
-        .query(qrySelect, values)
+        .query(qryUpdate, values)
         .then((res) => {
           console.log(res.rows[0]);
           result = res.rows[0];
           //see log for output
-        })
-        .catch((e) => console.error(e.stack));
 
-      agent.add(`Ficha de anamnese atualizada com sucesso!`);
+          agent.add(`Ficha de anamnese atualizada com sucesso!`);
+        })
+        .catch((e) => {
+          console.error(e.stack);
+          agent.add(
+            `Problemas ao atualizar ficha de anamnese. Tente novamente!`
+          );
+        });
     }
   }
 
@@ -162,19 +175,32 @@ export const webhookComunication = async (
     let result;
     await db
       .query(qryInsert, values)
-      .then((res) => {
+      .then(async (res) => {
         console.log(res.rows[0]);
         result = res.rows[0];
         //see log for output
-      })
-      .catch((e) => console.error(e.stack));
 
-    agent.add(
-      `Consulta agendada com sucesso! 📋✅
-      Data: ${result.data_consulta} 🗓
-      Horário: ${result.horario} 🕒
-      Especialidade: ${result.especialidade} 👩‍⚕️`
-    );
+        let resutEmail = await mailer.enviar(
+          agent.parameters.email,
+          'Agendamento de Consulta',
+          emailTemplate(
+            result.data_consulta,
+            result.horario,
+            result.especialidade
+          )
+        );
+
+        agent.add(
+          `Consulta agendada com sucesso! 📋✅
+          Data: ${result.data_consulta.toLocaleDateString('pt-BR')} 🗓
+          Horário: ${result.horario.getHours()}:${result.horario.getMinutes()} 🕒
+          Especialidade: ${result.especialidade} 👩‍⚕️`
+        );
+      })
+      .catch((e) => {
+        console.error(e.stack);
+        agent.add(`Problemas ao agendar a consulta. Tente novamente!`);
+      });
   }
 
   async function welcome(agent) {
@@ -242,3 +268,30 @@ export const webhookComunication = async (
   intentMap.set('agendamento.consulta', agendamentoConsulta);
   agent.handleRequest(intentMap);
 };
+
+function emailTemplate(data_consulta, horario, especialidade) {
+  return `
+    <div style="background-color: rgba(220, 220, 220, 0.4);">
+      <div class="header" style="display: flex; align-items: center; justify-content: center; padding: 10px;">
+          <h3 style="font-family: Arial, Helvetica, sans-serif; font-size: larger; margin: 0px; text-align: center; text-transform: uppercase;">Consulta Agendada</h3>
+      </div>
+      <div class="body" style="background-color: #FFF; display: flex; align-items: center; justify-content: center;">
+          <p style="font-family: Arial, Helvetica, sans-serif; font-size: medium; line-height: 1.5; padding: 10px; margin: 0px; text-align: justify;">
+              Consulta agendada com sucesso! 📋✅<br/>
+              Data: <strong>${data_consulta.toLocaleDateString(
+                'pt-BR'
+              )}</strong> 🗓<br/>
+              Horário: ${horario.getHours()}:${horario.getMinutes()} 🕒<br/>
+              Especialidade: ${especialidade} 👩‍⚕️<br/>
+          </p>
+      </div>
+      <div class="footer" style="display: flex; align-items: center; justify-content: center; padding: 5px;">
+          <div style="display: flex; width: max-content;">
+              <a href="/" style="text-decoration: none; text-align: center;">
+              <span style="font-family: Arial, Helvetica, sans-serif; font-size: larger; color: #000; text-transform: uppercase;">HealthRecords</span>
+              </a>
+          </div>
+      </div>
+    </div>
+  `;
+}
