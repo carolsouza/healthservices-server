@@ -1,6 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Triagens } from './Triagens';
-import { Resultados } from './Resultados';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Resultados } from "./Resultados";
 
 @Entity()
 export class Usuarios {
@@ -30,10 +29,6 @@ export class Usuarios {
 
   @Column({ default: null })
   token: string;
-
-  // Relations //
-  @OneToMany((type) => Triagens, (triagem) => triagem.id, { cascade: false })
-  triagens: Triagens[];
 
   @OneToMany((type) => Resultados, (resultado) => resultado.id, {
     cascade: false,
