@@ -1,10 +1,21 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
-// import { Usuarios } from './Usuarios';
-
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Usuarios } from './Usuarios';
 @Entity()
 export class Consulta {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column()
+  dor_cabeca: boolean;
+
+  @Column()
+  febre: boolean;
+
+  @Column()
+  nausea: boolean;
+
+  @Column()
+  campo_extra: string;
 
   @Column()
   especialidade: string;
@@ -17,4 +28,10 @@ export class Consulta {
 
   @Column()
   email: string;
+
+  // Relations //
+  @ManyToOne(() => Usuarios, (usuario) => usuario.email, {
+    cascade: false,
+  })
+  public usuarios: Usuarios;
 }

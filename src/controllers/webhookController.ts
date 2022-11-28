@@ -87,20 +87,22 @@ export const webhookComunication = async (
     console.log('Result: ', result);
     if (result == undefined) {
       console.log('ta vindo no if');
-      const qryInsert = `INSERT INTO anamnese(diabetes, oncologico, cardiaco, uso_medicacao, exame_period, exame_period_ultim, alergia_med, alergia_med_nome, funcionamento_intestino, ciclo_menstrual, anticoncepcional, hipertensao, email) \
-      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *`;
+      const qryInsert = `INSERT INTO anamnese(diabetes, oncologico, cardiaco, tabagista, etilista, covid, exercio_fisico, uso_medicacao, exame_period, exame_period_ultim, alergia_med, alergia_med_nome, funcionamento_intestino, hipertensao, email) \
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING *`;
       let values = [
         agent.parameters.diabetes == 'Sim' ? true : false,
         agent.parameters.oncologico == 'Sim' ? true : false,
         agent.parameters.cardiaco == 'Sim' ? true : false,
+        agent.parameters.tabagista == 'Sim' ? true : false,
+        agent.parameters.etilista == 'Sim' ? true : false,
+        agent.parameters.covid == 'Sim' ? true : false,
+        agent.parameters.exercio_fisico == 'Sim' ? true : false,
         agent.parameters.uso_medicacao == 'Sim' ? true : false,
         agent.parameters.exame_period == 'Sim' ? true : false,
         agent.parameters.exame_period_ultim,
         agent.parameters.alergia_med == 'Sim' ? true : false,
         agent.parameters.alergia_med_nome,
         agent.parameters.funcionamento_intestino,
-        agent.parameters.ciclo_menstrual,
-        agent.parameters.anticoncepcional == 'Sim' ? true : false,
         agent.parameters.hipertensao == 'Sim' ? true : false,
         agent.parameters.email,
       ];
@@ -123,20 +125,22 @@ export const webhookComunication = async (
         });
     } else {
       console.log('ta vindo no else');
-      const qryUpdate = `UPDATE anamnese SET diabetes = $1, oncologico = $2, cardiaco = $3, uso_medicacao = $4, exame_period = $5, exame_period_ultim = $6, alergia_med = $7, alergia_med_nome = $8, funcionamento_intestino = $9, ciclo_menstrual = $10, anticoncepcional = $11, hipertensao = $12 \
-      WHERE email = $13 RETURNING *`;
+      const qryUpdate = `UPDATE anamnese SET diabetes = $1, oncologico = $2, cardiaco = $3, tabagista = $4, etilista = $5, covid = $6, exercio_fisico = $7, uso_medicacao = $8, exame_period = $9, exame_period_ultim = $10, alergia_med = $11, alergia_med_nome = $12, funcionamento_intestino = $13, hipertensao = $14 \
+      WHERE email = $15 RETURNING *`;
       let values = [
         agent.parameters.diabetes == 'Sim' ? true : false,
         agent.parameters.oncologico == 'Sim' ? true : false,
         agent.parameters.cardiaco == 'Sim' ? true : false,
+        agent.parameters.tabagista == 'Sim' ? true : false,
+        agent.parameters.etilista == 'Sim' ? true : false,
+        agent.parameters.covid == 'Sim' ? true : false,
+        agent.parameters.exercio_fisico == 'Sim' ? true : false,
         agent.parameters.uso_medicacao == 'Sim' ? true : false,
         agent.parameters.exame_period == 'Sim' ? true : false,
         agent.parameters.exame_period_ultim,
         agent.parameters.alergia_med == 'Sim' ? true : false,
         agent.parameters.alergia_med_nome,
         agent.parameters.funcionamento_intestino,
-        agent.parameters.ciclo_menstrual,
-        agent.parameters.anticoncepcional == 'Sim' ? true : false,
         agent.parameters.hipertensao == 'Sim' ? true : false,
         agent.parameters.email,
       ];
@@ -163,9 +167,13 @@ export const webhookComunication = async (
 
   async function agendamentoConsulta(agent) {
     const qryInsert =
-      'INSERT INTO consulta(especialidade, data_consulta, horario, email) \
-      VALUES($1, $2, $3, $4) RETURNING *';
+      'INSERT INTO consulta(dor_cabeca, febre, nausea, campo_extra, especialidade, data_consulta, horario, email) \
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *';
     let values = [
+      agent.parameters.dor_cabeca,
+      agent.parameters.febre,
+      agent.parameters.nausea,
+      agent.parameters.campo_extra,
       agent.parameters.especialidade,
       agent.parameters.data_consulta,
       agent.parameters.horario,
@@ -190,6 +198,7 @@ export const webhookComunication = async (
           )
         );
 
+        console.log('valor de result: ', result);
         agent.add(
           `Consulta agendada com sucesso! 📋✅
           Data: ${result.data_consulta.toLocaleDateString('pt-BR')} 🗓
