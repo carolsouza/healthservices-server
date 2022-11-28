@@ -27,6 +27,9 @@ export class Consulta {
   horario: Date;
 
   @Column()
+  status: boolean;
+
+  @Column()
   email: string;
 
   // Relations //
