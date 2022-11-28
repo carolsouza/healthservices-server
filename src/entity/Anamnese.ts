@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
-
+import { Usuarios } from './Usuarios';
 @Entity()
 export class Anamnese {
   @PrimaryGeneratedColumn()
@@ -13,6 +13,18 @@ export class Anamnese {
 
   @Column()
   cardiaco: boolean;
+
+  @Column()
+  tabagista: boolean;
+
+  @Column()
+  etilista: boolean;
+
+  @Column()
+  covid: boolean;
+
+  @Column()
+  exercio_fisico: boolean;
 
   @Column()
   uso_medicacao: boolean;
@@ -33,18 +45,14 @@ export class Anamnese {
   funcionamento_intestino: string;
 
   @Column()
-  ciclo_menstrual: string;
-
-  @Column()
-  anticoncepcional: boolean;
-
-  @Column()
   hipertensao: boolean;
 
   @Column()
   email: string;
 
   // Relations //
-  /*@OneToOne((type) => User, (user) => user.email, { cascade: false })
-  user: User;*/
+  @OneToOne(() => Usuarios, (user) => user.email, {
+    cascade: false,
+  })
+  public usuarios: Usuarios;
 }

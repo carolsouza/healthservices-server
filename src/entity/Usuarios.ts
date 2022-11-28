@@ -1,5 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Triagens } from './Triagens';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
+import { Anamnese } from './Anamnese';
+import { Consulta } from './Consulta';
 import { Resultados } from './Resultados';
 
 @Entity()
@@ -32,11 +40,20 @@ export class Usuarios {
   token: string;
 
   // Relations //
-  @OneToMany((type) => Triagens, (triagem) => triagem.id, { cascade: false })
-  triagens: Triagens[];
-
-  @OneToMany((type) => Resultados, (resultado) => resultado.id, {
+  @OneToMany(() => Consulta, (consulta) => consulta.email, {
     cascade: false,
   })
-  resultados: Resultados[];
+  public consulta: Consulta[];
+
+  @OneToOne(() => Anamnese, (anamnese) => anamnese.email, {
+    cascade: false,
+    eager: true,
+  })
+  @JoinColumn()
+  public anamnese: Anamnese;
+
+  @OneToMany(() => Resultados, (resultado) => resultado.id, {
+    cascade: false,
+  })
+  public resultados: Resultados[];
 }
