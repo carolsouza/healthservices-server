@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from "typeorm";
 import { Usuarios } from "./Usuarios";
 
+
 @Entity()
 export class Resultados {
   @PrimaryGeneratedColumn()
@@ -21,7 +22,4 @@ export class Resultados {
   @Column()
   localidade: string;
 
-  // Relations //
-  @OneToOne((type) => Usuarios, (usuario) => usuario.id, { cascade: false })
-  resultados: Usuarios;
 }

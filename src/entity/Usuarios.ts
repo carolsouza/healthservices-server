@@ -1,5 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { Resultados } from "./Resultados";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
+import { Anamnese } from './Anamnese';
+import { Consulta } from './Consulta';
+import { Resultados } from './Resultados';
+
 
 @Entity()
 export class Usuarios {
@@ -30,8 +40,4 @@ export class Usuarios {
   @Column({ default: null })
   token: string;
 
-  @OneToMany((type) => Resultados, (resultado) => resultado.id, {
-    cascade: false,
-  })
-  resultados: Resultados[];
 }
