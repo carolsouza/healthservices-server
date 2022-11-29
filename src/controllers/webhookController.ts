@@ -167,16 +167,17 @@ export const webhookComunication = async (
 
   async function agendamentoConsulta(agent) {
     const qryInsert =
-      'INSERT INTO consulta(dor_cabeca, febre, nausea, campo_extra, especialidade, data_consulta, horario, email) \
-      VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *';
+      'INSERT INTO consulta(dor_cabeca, febre, nausea, campo_extra, especialidade, data_consulta, horario, status, email) \
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *';
     let values = [
-      agent.parameters.dor_cabeca,
-      agent.parameters.febre,
-      agent.parameters.nausea,
+      agent.parameters.dor_cabeca == 'Sim' ? true : false,
+      agent.parameters.febre == 'Sim' ? true : false,
+      agent.parameters.nausea == 'Sim' ? true : false,
       agent.parameters.campo_extra,
       agent.parameters.especialidade,
       agent.parameters.data_consulta,
       agent.parameters.horario,
+      true,
       agent.parameters.email,
     ];
 
@@ -194,7 +195,8 @@ export const webhookComunication = async (
           emailTemplate(
             result.data_consulta,
             result.horario,
-            result.especialidade
+            result.especialidade,
+            result.id
           )
         );
 
@@ -278,7 +280,7 @@ export const webhookComunication = async (
   agent.handleRequest(intentMap);
 };
 
-function emailTemplate(data_consulta, horario, especialidade) {
+function emailTemplate(data_consulta, horario, especialidade, id) {
   return `
     <div style="background-color: rgba(220, 220, 220, 0.4);">
       <div class="header" style="display: flex; align-items: center; justify-content: center; padding: 10px;">
@@ -292,6 +294,7 @@ function emailTemplate(data_consulta, horario, especialidade) {
               )}</strong> 🗓<br/>
               Horário: ${horario.getHours()}:${horario.getMinutes()} 🕒<br/>
               Especialidade: ${especialidade} 👩‍⚕️<br/>
+              Consulte os dados do agendamento no site utilizando o id: <strong>${id}</strong><br/>
           </p>
       </div>
       <div class="footer" style="display: flex; align-items: center; justify-content: center; padding: 5px;">
