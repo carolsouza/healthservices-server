@@ -10,6 +10,7 @@ import {
 import { webhookComunication } from "./controllers/WebhookController";
 import { getConsultas, saveConsultas } from "./controllers/ConsultaController";
 import { getAnamnese, saveAnamnese } from "./controllers/AnamneseController";
+import { getMetabaseData } from "./controllers/MetabaseController";
 
 const routes = Router();
 
@@ -28,6 +29,9 @@ routes.post("/consultas", saveConsultas);
 //rotas de anamnese
 routes.get("/anamnese", getAnamnese);
 routes.post("/anamnese", saveAnamnese);
+
+//rotas do metabase
+routes.get("/metabase", getMetabaseData);
 
 routes.post("/webhook", webhookComunication);
 routes.get("/", (req, res) => {
