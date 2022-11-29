@@ -4,7 +4,7 @@ import { Anamnese } from "../entity/Anamnese";
 
 export const getAnamnese = async (request: Request, response: Response) => {
   const { email } = request.query;
-  console.log(email);
+  // console.log("email: ", email);
 
   const fichas = await getRepository(Anamnese).find({
     email: email.toString(),

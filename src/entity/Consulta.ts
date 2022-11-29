@@ -26,12 +26,12 @@ export class Consulta {
   @Column()
   horario: Date;
 
-  @Column()
+  @Column({ nullable: false, default: true })
   status: boolean;
 
   @Column()
   email: string;
 
-  @Column()
+  @Column({ nullable: false })
   usuariosId: number;
 }

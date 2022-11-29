@@ -12,6 +12,7 @@ import {
   getConsultasByEmail,
   getConsultasById,
   saveConsultas,
+  updateStatus,
 } from "./controllers/ConsultaController";
 import { getAnamnese, saveAnamnese } from "./controllers/AnamneseController";
 import { getMetabaseData } from "./controllers/MetabaseController";
@@ -27,9 +28,10 @@ routes.patch("/users/:id", updateUser);
 routes.delete("/users/:id", removeUser);
 
 //rotas de consultas
-routes.get("/consultas/email", getConsultasByEmail);
+routes.get("/consultas-email", getConsultasByEmail);
 routes.get("/consultas", getConsultasById);
 routes.post("/consultas", saveConsultas);
+routes.patch("/consultas/:id", updateStatus);
 
 //rotas de anamnese
 routes.get("/anamnese", getAnamnese);
