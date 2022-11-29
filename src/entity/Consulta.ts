@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { Usuarios } from './Usuarios';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Usuarios } from "./Usuarios";
 @Entity()
 export class Consulta {
   @PrimaryGeneratedColumn()
@@ -29,9 +29,6 @@ export class Consulta {
   @Column()
   email: string;
 
-  // Relations //
-  @ManyToOne(() => Usuarios, (usuario) => usuario.email, {
-    cascade: false,
-  })
-  public usuarios: Usuarios;
+  @Column()
+  usuariosId: number;
 }

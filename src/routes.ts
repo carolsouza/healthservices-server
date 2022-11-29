@@ -8,7 +8,11 @@ import {
   verificaLogin,
 } from "./controllers/UsersController";
 import { webhookComunication } from "./controllers/WebhookController";
-import { getConsultas, saveConsultas } from "./controllers/ConsultaController";
+import {
+  getConsultasByEmail,
+  getConsultasById,
+  saveConsultas,
+} from "./controllers/ConsultaController";
 import { getAnamnese, saveAnamnese } from "./controllers/AnamneseController";
 import { getMetabaseData } from "./controllers/MetabaseController";
 
@@ -23,7 +27,8 @@ routes.patch("/users/:id", updateUser);
 routes.delete("/users/:id", removeUser);
 
 //rotas de consultas
-routes.get("/consultas", getConsultas);
+routes.get("/consultas/email", getConsultasByEmail);
+routes.get("/consultas", getConsultasById);
 routes.post("/consultas", saveConsultas);
 
 //rotas de anamnese
