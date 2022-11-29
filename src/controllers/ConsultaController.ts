@@ -2,7 +2,10 @@ import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import { Consulta } from "../entity/Consulta";
 
-export const getConsultas = async (request: Request, response: Response) => {
+export const getConsultasByEmail = async (
+  request: Request,
+  response: Response
+) => {
   const { email } = request.query;
   // console.log(request.query);
 
@@ -10,6 +13,26 @@ export const getConsultas = async (request: Request, response: Response) => {
 
   const consultas = await getRepository(Consulta).find({
     email: email.toString(),
+  });
+
+  console.log(consultas);
+
+  return response.json(consultas);
+};
+
+export const getConsultasById = async (
+  request: Request,
+  response: Response
+) => {
+  const { id } = request.query;
+  const { userId } = request.query;
+  // console.log(request.query);
+
+  console.log(id);
+
+  const consultas = await getRepository(Consulta).findOne({
+    id: +id,
+    usuariosId: +userId,
   });
 
   console.log(consultas);
