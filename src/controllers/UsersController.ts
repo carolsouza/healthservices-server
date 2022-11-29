@@ -1,9 +1,9 @@
-import { getRepository } from 'typeorm';
-import { Usuarios } from '../entity/Usuarios';
-import { Request, Response } from 'express';
+import { getRepository } from "typeorm";
+import { Usuarios } from "../entity/Usuarios";
+import { Request, Response } from "express";
 
-import * as bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken';
+import * as bcrypt from "bcrypt";
+import * as jwt from "jsonwebtoken";
 
 export const getUsers = async (request: Request, response: Response) => {
   let Users = await getRepository(Usuarios).find();
@@ -34,8 +34,18 @@ export const saveUser = async (request: Request, response: Response) => {
   users.cidade = request.body.cidade;
   users.email = request.body.email;
 
-  const user = await getRepository(Usuarios).save(users);
-  response.json(user);
+  const duplicateUser = await getRepository(Usuarios).findOne({
+    email: request.body.email,
+  });
+  console.log(duplicateUser);
+  if (!duplicateUser) {
+    const user = await getRepository(Usuarios).save(users);
+    response.json(user);
+  } else {
+    return response
+      .status(400)
+      .send("Usuário duplicado, cadastre outro e-mail!");
+  }
 };
 
 export const updateUser = async (request: Request, response: Response) => {
@@ -54,7 +64,7 @@ export const updateUser = async (request: Request, response: Response) => {
     return response.json(userUpdated);
   }
 
-  return response.status(404).json({ message: 'Usuário não encontrado' });
+  return response.status(404).json({ message: "Usuário não encontrado" });
 };
 
 export const removeUser = async (request: Request, response: Response) => {
@@ -64,10 +74,10 @@ export const removeUser = async (request: Request, response: Response) => {
 
   if (user.affected == 1) {
     const userUpdated = await getRepository(Usuarios).findOne(id);
-    return response.json({ message: 'Usuário removido' });
+    return response.json({ message: "Usuário removido" });
   }
 
-  return response.status(404).json({ message: 'Usuário não encontrado' });
+  return response.status(404).json({ message: "Usuário não encontrado" });
 };
 
 export const verificaLogin = async (request: Request, response: Response) => {
@@ -80,7 +90,7 @@ export const verificaLogin = async (request: Request, response: Response) => {
     });
 
     if (users == null) {
-      return response.status(400).send('Nenhum usuário encontrado!');
+      return response.status(400).send("Nenhum usuário encontrado!");
     }
 
     const isValid = await bcrypt.compare(values.senha, users.senha);
@@ -89,7 +99,7 @@ export const verificaLogin = async (request: Request, response: Response) => {
       return response.sendStatus(401);
     }
 
-    const token = jwt.sign({ id: users.id }, 'secret', { expiresIn: '2d' });
+    const token = jwt.sign({ id: users.id }, "secret", { expiresIn: "2d" });
 
     const usersToken = { ...users, token: token };
 
@@ -102,6 +112,6 @@ export const verificaLogin = async (request: Request, response: Response) => {
       token,
     });
   } else {
-    response.status(400).json({ message: 'Requisicao Inválida!' });
+    response.status(400).json({ message: "Requisicao Inválida!" });
   }
 };
