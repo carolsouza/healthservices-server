@@ -9,8 +9,6 @@ import {
 import { Anamnese } from './Anamnese';
 import { Consulta } from './Consulta';
 import { Resultados } from './Resultados';
-
-
 @Entity()
 export class Usuarios {
   @PrimaryGeneratedColumn()
@@ -40,4 +38,15 @@ export class Usuarios {
   @Column({ default: null })
   token: string;
 
+  // Relations //
+  @OneToOne(() => Anamnese, (anamnese) => anamnese.email, {
+    cascade: false,
+  })
+  @JoinColumn()
+  public anamnese: Anamnese;
+
+  @OneToMany(() => Consulta, (consulta) => consulta.email, {
+    cascade: false,
+  })
+  public consulta: Consulta[];
 }
