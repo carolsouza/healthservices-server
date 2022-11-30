@@ -15,7 +15,7 @@ import {
   updateStatus,
 } from "./controllers/ConsultaController";
 import { getAnamnese, saveAnamnese } from "./controllers/AnamneseController";
-import { getMetabaseData } from "./controllers/MetabaseController";
+import { getAnalysis, getMetabaseData } from "./controllers/MetabaseController";
 
 const routes = Router();
 
@@ -39,6 +39,7 @@ routes.post("/anamnese", saveAnamnese);
 
 //rotas do metabase
 routes.get("/metabase", getMetabaseData);
+routes.get("/analysis", getAnalysis);
 
 routes.post("/webhook", webhookComunication);
 routes.get("/", (req, res) => {

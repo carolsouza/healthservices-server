@@ -1,7 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from "typeorm";
 import { Usuarios } from "./Usuarios";
 
-
 @Entity()
 export class Resultados {
   @PrimaryGeneratedColumn()
@@ -11,15 +10,14 @@ export class Resultados {
   dataCad: Date;
 
   @Column()
-  idTriagem: number;
+  idAnamnese: number;
 
   @Column()
   gravidade: string;
 
   @Column()
-  especialidade: string;
+  idConsulta: number;
 
   @Column()
-  localidade: string;
-
+  idUser: number;
 }
