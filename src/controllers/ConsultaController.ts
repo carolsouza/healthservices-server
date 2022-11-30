@@ -11,13 +11,20 @@ export const getConsultasByEmail = async (
 
   // console.log(email);
 
-  const consultas = await getRepository(Consulta).find({
-    email: email.toString(),
-  });
+  let consultas;
 
-  console.log(consultas);
+  if (email !== "") {
+    consultas = await getRepository(Consulta).find({
+      email: email.toString(),
+    });
+  }
 
-  return response.json(consultas);
+  // console.log(consultas);
+  if (consultas) {
+    return response.json(consultas);
+  } else {
+    return response.status(404).send("Nenhuma consulta encontrada");
+  }
 };
 
 export const getConsultasById = async (
@@ -28,16 +35,26 @@ export const getConsultasById = async (
   const { userId } = request.query;
   // console.log(request.query);
 
-  console.log(id);
+  // console.log(id);
 
-  const consultas = await getRepository(Consulta).findOne({
-    id: +id,
-    usuariosId: +userId,
-  });
+  if (id !== "") {
+    const consultas = await getRepository(Consulta).findOne({
+      id: +id,
+      usuariosId: +userId,
+    });
 
-  console.log(consultas);
+    // console.log(consultas);
 
-  return response.json(consultas);
+    if (consultas) {
+      response.json({ consulta: consultas, email: consultas.email });
+    } else {
+      return response
+        .status(400)
+        .send("Nenhuma consulta com esse id para esse usuário!");
+    }
+  } else {
+    return response.status(400).send("Campo em branco!");
+  }
 };
 
 export const saveConsultas = async (request: Request, response: Response) => {
@@ -49,4 +66,18 @@ export const saveConsultas = async (request: Request, response: Response) => {
 
   const newConsulta = await getRepository(Consulta).save(consulta);
   response.json(newConsulta);
+};
+
+export const updateStatus = async (request: Request, response: Response) => {
+  const { id } = request.params;
+  console.log(id);
+
+  const user = await getRepository(Consulta).update(id, { status: false });
+
+  if (user.affected == 1) {
+    const consultaUpdated = await getRepository(Consulta).findOne(id);
+    return response.json(consultaUpdated);
+  }
+
+  return response.status(404).json({ message: "Consulta não encontrada" });
 };
